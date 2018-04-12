@@ -5,4 +5,5 @@
     <string name="create_cards">Create Your Own Card Set</string>
     <string name="manage_cards">Your Card Sets</string>
     <string name="settings">Game Settings</string>
+    <string name="share">Share With Friends</string>
 </resources>
