@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="title_activity_main">Charades Reloaded</string>
+    <string name="play_game">Play!</string>
+    <string name="create_cards">Create Your Own Card Set</string>
+    <string name="manage_cards">Your Card Sets</string>
+    <string name="settings">Game Settings</string>
 </resources>
