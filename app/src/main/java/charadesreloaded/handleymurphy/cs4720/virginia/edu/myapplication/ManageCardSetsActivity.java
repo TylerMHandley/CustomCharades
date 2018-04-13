@@ -28,9 +28,12 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_card_sets);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Your Card Sets");
         mCards = new ArrayList<>();
         //TODO: Remove this method call
         fakeInitCards();
+        
         initCards();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -43,11 +46,17 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         });
 
         RecyclerView rvCards = findViewById(R.id.rvCards);
-        adapter = new CardAdapter(mCards, this);
+        adapter = new CardAdapter(mCards, this, CardAdapter.VIEW_CARDSET);
 
         rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     //TODO: Remove this method, this is only for testing

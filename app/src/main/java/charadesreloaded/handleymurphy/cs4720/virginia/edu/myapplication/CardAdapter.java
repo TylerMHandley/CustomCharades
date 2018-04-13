@@ -1,6 +1,7 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     private List<String> mCards;
     private Context mContext;
+    private int onClickType; //Behavior of onclick, will be one of the types:
+    public static final int PLAY_GAME = 1;
+    public static final int VIEW_CARDSET = 2;
+    public static final int EDIT_CARD = 3;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -34,9 +39,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         }
     }
 
-    public CardAdapter(List<String> Cards, Context context) {
+    public CardAdapter(List<String> Cards, Context context, int onClick) {
         mCards = Cards;
         mContext = context;
+        onClickType = onClick;
         this.notifyDataSetChanged();
     }
 
@@ -55,9 +61,31 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(CardAdapter.ViewHolder viewHolder, final int position) {
-        String item = mCards.get(position);
+        final String item = mCards.get(position);
         TextView textView = viewHolder.nameTextView;
         textView.setText(item);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (onClickType) {
+
+                    case PLAY_GAME:
+                        break;
+
+                    case VIEW_CARDSET:
+                        final Intent intent = new Intent(mContext, ManageCardsActivity.class);
+                        intent.putExtra("cardSet", item);
+                        mContext.startActivity(intent);
+                        break;
+
+                    case EDIT_CARD:
+                        break;
+
+                    default:
+                        break; //We shouldn't get here ever, but if we do add some code to basically crash I guess
+                }
+            }
+        });
     }
 
     @Override

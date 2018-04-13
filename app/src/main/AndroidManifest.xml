@@ -22,6 +22,10 @@
         <activity
             android:name=".ManageCardSetsActivity"
             android:label="@string/title_activity_manage_cards"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ManageCardsActivity"
+            android:label="@string/title_activity_manage_cards"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
