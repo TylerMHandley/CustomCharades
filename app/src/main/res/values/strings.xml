@@ -6,4 +6,5 @@
     <string name="manage_cards">Your Card Sets</string>
     <string name="settings">Game Settings</string>
     <string name="share">Share With Friends</string>
+    <string name="title_activity_manage_cards">ManageCardsActivity</string>
 </resources>
