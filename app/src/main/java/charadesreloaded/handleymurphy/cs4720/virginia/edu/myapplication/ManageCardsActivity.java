@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -51,14 +52,14 @@ public class ManageCardsActivity extends AppCompatActivity {
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         adapter.notifyDataSetChanged();
     }
-
+/*
     @Override
     public boolean onSupportNavigateUp() {
         Log.d("Backpressed", "T'was Pressed");
         onBackPressed();
         return true;
     }
-    /*
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_manage_card, menu);
@@ -69,7 +70,6 @@ public class ManageCardsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
        int id = item.getItemId();
        if (id == R.id.save_button){
-           Log.d("Savepressed", "T'was Pressed");
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
            ContentValues values = new ContentValues();
@@ -78,25 +78,14 @@ public class ManageCardsActivity extends AppCompatActivity {
                values.put("cardSet", cardSet);
                db.insert("cards", null, values);
            }
+           Snackbar.make(findViewById(R.id.coordlayout), "Saved Changes", Snackbar.LENGTH_SHORT).show();
        }
-       else if(id == R.id.home){
+       else if(id == android.R.id.home){
            Log.d("Backpressed", "T'was Pressed");
            onBackPressed();
        }
 
        return true;
-    }
-    */
-    public void saveCards(View view){
-        Log.d("Savepressed", "T'was Pressed");
-        CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        for (String str : mCards){
-            values.put("cardText",str);
-            values.put("cardSet", cardSet);
-            db.insert("cards", null, values);
-        }
     }
     private void initCards(){
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
@@ -109,6 +98,7 @@ public class ManageCardsActivity extends AppCompatActivity {
             String item = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));
             mCards.add(item);
         }
+
     }
     public void newLine(View view){
         /*
