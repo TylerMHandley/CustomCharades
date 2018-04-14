@@ -48,6 +48,7 @@ public class ManageCardsActivity extends AppCompatActivity {
         return true;
     }
     public void newLine(View view){
+        /*
         EditText newCard = new EditText(this);
         LinearLayout lineup = (LinearLayout) findViewById(R.id.lineup);
         LinearLayout.LayoutParams parameters = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -56,6 +57,9 @@ public class ManageCardsActivity extends AppCompatActivity {
         lineup.addView(newCard);
         this.numLines++;
         newCard.setId(numLines);
+        */
+        this.mCards.add("");
+        this.adapter.notifyDataSetChanged();
     }
 
 }
