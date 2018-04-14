@@ -11,6 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -18,7 +21,6 @@ import java.util.ArrayList;
  * This is the activity that shows you your card **sets**, not the cards within a set
  */
 public class ManageCardSetsActivity extends AppCompatActivity {
-
     protected ArrayList<String> mCards;
     protected CardAdapter adapter;
 
