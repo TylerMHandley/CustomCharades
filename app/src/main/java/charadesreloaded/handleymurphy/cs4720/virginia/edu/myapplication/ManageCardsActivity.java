@@ -25,10 +25,11 @@ import java.sql.SQLData;
 import java.util.ArrayList;
 
 public class ManageCardsActivity extends AppCompatActivity {
-    private int numLines = -1;
+    //private int numLines = -1;
     protected ArrayList<String> mCards;
     protected String cardSet;
     protected CardAdapter adapter;
+    protected ArrayList<String> startSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +74,27 @@ public class ManageCardsActivity extends AppCompatActivity {
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
            ContentValues values = new ContentValues();
-           for (String str : mCards){
-               values.put("cardText",str);
-               values.put("cardSet", cardSet);
-               db.insert("cards", null, values);
+           //for (String str : mCards){
+           int length = mCards.size();
+           int orgLength = startSet.size();
+           int max = Math.max(length, orgLength);
+           for (int i =0;i<max;i++){
+               if (i < orgLength && i < length && !startSet.get(i).equals(mCards.get(i))) {
+                   //UPDATE
+                   values.put("cardText",mCards.get(i));
+                   db.update("cards", values, "cardText='"+startSet.get(i)+"' AND cardSet='" + cardSet + "'" , null);
+               }else if (i < orgLength && i >= length){
+                   //DELETE
+                    db.delete("cards", "cardText='"+startSet.get(i)+ "' AND cardSet='" + cardSet + "'", null);
+               }else if (i >= orgLength && i < length ) {
+                   //ADD
+                   if (!mCards.get(i).equals("")) {
+                       values.put("cardText", mCards.get(i));
+                       values.put("cardSet", cardSet);
+                       db.insert("cards", null, values);
+                   }
+               }
+
            }
            Snackbar.make(findViewById(R.id.coordlayout), "Saved Changes", Snackbar.LENGTH_SHORT).show();
        }
@@ -91,13 +109,14 @@ public class ManageCardsActivity extends AppCompatActivity {
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String [] projection = {"cardText"};
-        String query = "SELECT cardText FROM cards WHERE cardSet ='" + cardSet + "'";
+        String query = "SELECT cardText FROM cards WHERE cardSet ='" + cardSet + "'" ;
         //Cursor cursor = db.query("cards", projection, null, null, null, null, null);
         Cursor cursor = db.rawQuery(query, null);
         while(cursor.moveToNext()){
             String item = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));
             mCards.add(item);
         }
+        this.startSet = new ArrayList<>(mCards);
 
     }
     public void newLine(View view){
