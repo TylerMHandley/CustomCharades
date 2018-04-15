@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -32,8 +34,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     public static final int EDIT_CARD = 3;
     private List<String> beforeUpdate;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView deleteButton;
         public TextView nameTextView;
         public EditText nameEditView;
         public EditTextChangeListener myListener;
@@ -48,6 +51,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             this.nameEditView = itemView.findViewById(R.id.edit_card_name);
             this.myListener = myListener;
             this.nameEditView.addTextChangedListener(this.myListener);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
         public EditText getEditView() {return this.nameEditView;}
         public TextView getNameView() {
@@ -77,12 +81,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         }else{
             manageView = inflater.inflate(R.layout.edit_item_card, parent, false);
             viewHolder = new ViewHolder(manageView, new EditTextChangeListener());
+
         }
 
         // Return a new holder instance
         return viewHolder;
     }
-
+    public void delete(int position){
+        mCards.remove(position);
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(CardAdapter.ViewHolder viewHolder, final int position) {
         final String item = mCards.get(position);
@@ -116,11 +124,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             });
         }else{
             try {
+
                 viewHolder.myListener.updatePosition(viewHolder.getAdapterPosition());
                 EditText editText = viewHolder.nameEditView;
                 //editText.setText(item);
                 editText.setText(this.beforeUpdate.get(viewHolder.getAdapterPosition()));
                 editText.setHint(R.string.addCardText);
+                viewHolder.deleteButton.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View v) {
+                        delete(position);
+                    }
+                });
+
             }catch (NullPointerException e){
                 viewHolder.myListener.updatePosition(viewHolder.getAdapterPosition());
                 EditText editText = viewHolder.nameEditView;
@@ -137,6 +152,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             return 0;
         return mCards.size();
     }
+
     private class EditTextChangeListener implements TextWatcher {
         private int position;
         public void updatePosition(int position){
