@@ -9,6 +9,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String PREFS_NAME = "CharadesPrefsFile";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
     public void goToManage(View view) {
         final Intent manageIntent = new Intent(this, ManageCardSetsActivity.class);
         startActivity(manageIntent);
+    }
+
+    //onClick method to go to play selection screen
+    public void goToPlay(View view) {
+        final Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
+        startActivity(playIntent);
     }
 
 }

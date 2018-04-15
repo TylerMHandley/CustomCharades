@@ -95,6 +95,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                     switch (onClickType) {
 
                         case PLAY_GAME:
+                            final Intent playIntent = new Intent(mContext, PlayActivity.class);
+                            playIntent.putExtra("cardSet", item);
+                            mContext.startActivity(playIntent);
                             break;
 
                         case VIEW_CARDSET:

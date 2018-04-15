@@ -18,6 +18,7 @@ public class CardDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table cardsets (title varchar(50), PRIMARY KEY (title))");
         db.execSQL("create table cards (cardText varchar(200), cardSet varchar(50), FOREIGN KEY (cardSet) REFERENCES cardsets(title))");
+        db.execSQL("CREATE UNIQUE INDEX cardsunique ON cards(cardText, cardSet)");
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is

@@ -26,7 +26,17 @@
         <activity
             android:name=".ManageCardsActivity"
             android:label="@string/title_activity_manage_cards"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SelectCardSetToPlayActivity"
+            android:label="@string/title_activity_select_card_set_to_play"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PlayActivity"
+            android:label="@string/title_activity_play"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ResultsActivity"></activity>
     </application>
 
 </manifest>
