@@ -85,7 +85,8 @@ public class ManageCardsActivity extends AppCompatActivity {
                    db.update("cards", values, "cardText='"+startSet.get(i)+"' AND cardSet='" + cardSet + "'" , null);
                }else if (i < orgLength && i >= length){
                    //DELETE
-                    db.delete("cards", "cardText='"+startSet.get(i)+ "' AND cardSet='" + cardSet + "'", null);
+                   Log.e("Delete", startSet.get(i));
+                   db.delete("cards", "cardText='"+startSet.get(i)+ "' AND cardSet='" + cardSet + "'", null);
                }else if (i >= orgLength && i < length ) {
                    //ADD
                    if (!mCards.get(i).equals("")) {
@@ -134,5 +135,10 @@ public class ManageCardsActivity extends AppCompatActivity {
         this.mCards.add("");
         this.adapter.notifyDataSetChanged();
     }
-
+    public void delete(View view){
+        EditText edit = (EditText) findViewById(R.id.edit_card_name);
+        String str = edit.getText().toString();
+        this.mCards.remove(str);
+        this.adapter.notifyDataSetChanged();
+    }
 }
