@@ -1,5 +1,6 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -41,6 +42,11 @@ public class SelectCardSetToPlayActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+    @Override
+    public void onBackPressed() {
+        Intent backIntent = new Intent(this, MainActivity.class);
+        startActivity(backIntent);
     }
 
     private void initCards() {
