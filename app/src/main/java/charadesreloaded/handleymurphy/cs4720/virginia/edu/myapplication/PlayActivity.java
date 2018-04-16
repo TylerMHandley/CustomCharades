@@ -117,6 +117,10 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             }
             @Override
             public void onFinish() {
+                //TODO: Remove these 2 lines, replace it with a check for card sets with 0 cards in the SelectCardSetToPlay Activity
+                if(mCards.size() == 0)
+                    gameOver();
+
                 card.setText(mCards.get(mCardsPos));
                 timer.start();
                 gameBegun = true;
