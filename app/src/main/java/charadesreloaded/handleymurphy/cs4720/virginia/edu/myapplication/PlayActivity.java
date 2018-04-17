@@ -167,7 +167,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 SensorManager.getOrientation(R, orientation);
                 if(gameBegun && orientation[2] < 0) {
                     //Got it right
-                    if(orientation[2] < -1.1 && orientation[2] > -1.3 && (System.currentTimeMillis() - lastTime) > 1000) {
+                    if(orientation[2] < -1.1 && orientation[2] > -1.3 && (System.currentTimeMillis() - lastTime) > 2000) {
                         if(mCardsPos >= mCards.size()) {
                             gameOver();
                         }
@@ -179,7 +179,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                         }
                     }
                     //Got it wrong
-                    else if(orientation[2] < -1.9 && orientation[2] > -2.1 && (System.currentTimeMillis() - lastTime) > 1000) {
+                    else if(orientation[2] < -1.9 && orientation[2] > -2.1 && (System.currentTimeMillis() - lastTime) > 2000) {
                         if(mCardsPos >= mCards.size()) {
                             gameOver();
                         }
