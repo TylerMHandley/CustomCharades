@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("title", setName);
+                values.put("count", 0);
                 db.insert("cardsets", null,values);
                 startActivity(addSetIntent);
             }
