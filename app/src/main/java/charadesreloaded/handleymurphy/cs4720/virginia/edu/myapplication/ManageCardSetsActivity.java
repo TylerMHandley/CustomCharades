@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -99,12 +100,13 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", "Testing");
+        values.put("count", 0);
         db.insert("cardsets", null, values);
         values.put("title", "Woah");
+        values.put("count", 0);
         db.insert("cardsets", null, values);
         values.put("title", "Yep");
-        db.insert("cardsets", null, values);
-        values.put("title", "Yep");
+        values.put("count", 0);
         db.insert("cardsets", null, values);
     }
 
