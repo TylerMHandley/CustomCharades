@@ -47,7 +47,8 @@ public class SelectCardSetToPlayActivity extends AppCompatActivity {
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String [] projection = {"title"};
-        Cursor cursor = db.query("cardsets", projection, null, null, null, null, "title ASC");
+        String whereClause = "count > 0";
+        Cursor cursor = db.query("cardsets", projection, whereClause, null, null, null, "title ASC");
         while(cursor.moveToNext()) {
             String item = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             mCards.add(item);

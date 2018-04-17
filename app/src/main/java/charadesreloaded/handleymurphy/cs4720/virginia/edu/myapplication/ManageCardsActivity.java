@@ -87,11 +87,13 @@ public class ManageCardsActivity extends AppCompatActivity {
                    //DELETE
                    Log.e("Delete", startSet.get(i));
                    db.delete("cards", "cardText='"+startSet.get(i)+ "' AND cardSet='" + cardSet + "'", null);
+                   db.execSQL("UPDATE cardsets SET count = count - 1 WHERE title ='" + cardSet + "' and count > 0");
                }else if (i >= orgLength && i < length ) {
                    //ADD
                    if (!mCards.get(i).equals("")) {
                        values.put("cardText", mCards.get(i));
                        values.put("cardSet", cardSet);
+                       db.execSQL("UPDATE cardsets SET count = count + 1 WHERE title = '" + cardSet + "'");
                        db.insert("cards", null, values);
                    }
                }
