@@ -6,4 +6,47 @@
     android:layout_height="match_parent"
     tools:context="charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication.ResultsActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/correct_cards"
+                />
+
+            <ListView
+                android:id="@+id/correct"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dip"
+                android:background="@android:color/holo_green_light"
+                />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="center_vertical"
+                android:text="@string/incorrect_cards" />
+
+            <ListView
+                android:id="@+id/incorrect"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dip"
+                android:background="@android:color/holo_red_light">
+
+            </ListView>
+        </LinearLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

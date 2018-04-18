@@ -31,6 +31,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     protected ArrayList<String> incorrectCards;
     protected String cardSet;
     protected int playTime;
+    protected boolean finished = false;
     protected boolean gameBegun = false;
     protected int mCardsPos;
     protected TextView card;
@@ -39,7 +40,9 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     private Sensor mMagnetometer;
     private float[] mGravity;
     private float[] mGeomagnetic;
+    private float[] orientation;
     private double lastTime;
+    private CountDownTimer gameTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +51,14 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //Make it ~~immersive~~
+        //Get rid of the navigation bar. User can bring it back up by tapping the screen
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //This is where we will put the counter
         final TextView title = toolbar.findViewById(R.id.toolbar_title);
+        //We are only concerned about orientation[2], which is the roll angle
+        orientation = new float[3];
 
         //Get player preferences
         SharedPreferences loadPrefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
@@ -61,13 +68,18 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         this.cardSet = getIntent().getStringExtra("cardSet");
         initCards();
         mCardsPos = 0;
+        //This is where we put the current game card
+        this.card = findViewById(R.id.displayedCard);
+        //Set the title to the name of the card set before the countdown timer starts
+        title.setText(cardSet);
 
+        //Set up sensors
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        this.card = findViewById(R.id.displayedCard);
-        title.setText(cardSet);
-        playGame();
+
+        //Set up our game
+        initializeGame();
     }
 
     @Override
@@ -85,24 +97,38 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         sensorManager.unregisterListener(this);
     }
 
-    private void playGame() {
+    private void initializeGame() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //Our title is where we show the countdown timer, if the user wants it
         final TextView title = toolbar.findViewById(R.id.toolbar_title);
 
-        final CountDownTimer timer = new CountDownTimer((long) playTime* 1000, 1000) {
+        /*
+        * I know this is going to seem out of order, so bear with me. I had to do it for execution reasons.
+        *
+        * This is the main timer for the game. The onTick method will be called every 1000ms, and onFinish
+        * will be called when the timer has reached 0 seconds */
+        gameTimer = new CountDownTimer((long) playTime* 1000, 1000) {
             @Override
             public void onTick(long l) {
+                //Every time the clock ticks (every second), show the user the new time remaining.
                 String titleText = getString(R.string.countdown_timer, l/1000);
                 title.setText(titleText);
             }
-
             @Override
             public void onFinish() {
-                gameOver();
+                //Let playGame know the game timer is finished and the game is over
+                finished = true;
             }
         };
 
-
+        /*This is the timer that displays the following things in order at the start of the game:
+            - Get Ready!
+            - 3
+            - 2
+            - 1
+            - Go!
+            This timer then finishes, and starts the game timer.
+         */
         CountDownTimer beginTimer = new CountDownTimer((long) 7200, 1200) {
             int i = 4;
             @Override
@@ -117,12 +143,107 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             }
             @Override
             public void onFinish() {
+                    //Show the first card to the user
                     card.setText(mCards.get(mCardsPos));
-                    timer.start();
+                    //Start the game timer (this is why timer is declared above)
+                    gameTimer.start();
+                    //The game has now begun, the while loop in playGame can actually do something
                     gameBegun = true;
+                    //This lets us establish a delay between signaling an incorrect or correct card
                     lastTime = System.currentTimeMillis();
+                    //Actually play the game
+                    playGame();
             }
         }.start();
+    }
+
+    private void playGame() {
+        //Define a new thread to run the actual game while the main timer and stuff runs on the main thread
+        Thread game = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Since we don't want our thread to just terminate immediately, I put it in a while(true) loop
+                while(true) {
+                    //We only want to do anything if our game has begun
+                    if(gameBegun) {
+                        /* If we've received the "finished" flag from the game timer or we've gone
+                           past the end of our card set, we break, which will call gameOver (out of
+                           the while loop)
+                        */
+                        if(finished || mCardsPos >= mCards.size()) {
+                            gameTimer.cancel();
+                            break;
+                        }
+                        //Only check the orientation if it's been 1.5s since the last tilt. We can change this
+                        else if(System.currentTimeMillis() - lastTime > 1500){
+                            /* 0.0f is the default value. I'm checking this because I don't want to
+                               proceed if we don't have an orienation array yet and because Java
+                               hates me and won't let me do float != null
+                             */
+                            if(orientation[2] != 0.0f) {
+                                //Got it incorrect -> these angles need to be changed. They were merely spot-checked and I have no idea what they actually equal
+                                if (orientation[2] < -1.1 && orientation[2] > -1.3) {
+                                    /* We will return this list to the ResultsActivity to show the
+                                       player what they got wrong */
+                                    incorrectCards.add(card.getText().toString());
+                                    //This is our position in mCards; we're going on to the next card now
+                                    mCardsPos++;
+                                    /*Set the card text shown to the user to the next card in the list
+                                      We have to do this weird runOnUiThread thing because Android does
+                                      not like when a subthread tries to mess with the UI--an exception will
+                                      be thrown
+                                     */
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    card.setText(mCards.get(mCardsPos));
+                                                }
+                                                catch(IndexOutOfBoundsException e) {
+
+                                                }
+                                            }
+                                        });
+                                    //Set the previous time so we can appropriately calculate the delay for the next tilt
+                                    lastTime = System.currentTimeMillis();
+                                }
+                                //Got it correct - > these angles should also be changed
+                                else if (orientation[2] < -1.9 && orientation[2] > -2.1) {
+                                    correctCards.add(card.getText().toString());
+                                    mCardsPos++;
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    card.setText(mCards.get(mCardsPos));
+                                                }
+                                                catch(IndexOutOfBoundsException e) {
+
+                                                }
+                                            }
+                                        });
+                                    lastTime = System.currentTimeMillis();
+                                }
+                            }
+                        }
+                    }
+                }
+                //***THIS IS THE END OF THE GAME (end of the while loop)***
+
+                /* Let's say the timer ended before we reached the last card. Add the last card shown
+                   to the 'incorrect' list */
+                try {
+                    incorrectCards.add(mCards.get(mCardsPos));
+                }
+                catch (IndexOutOfBoundsException e) {
+                    //Meh, don't really need to do anything, they actually got through all the cards
+                }
+                //End the game
+                gameOver();
+            }
+        });
+        //This runs the above thread definition
+        game.start();
     }
 
 
@@ -131,63 +252,18 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         // No edits needed here.
     }
 
-    /*@Override
-    public void onSensorChanged(SensorEvent event) {
-        x = event.values[0];
-        y = event.values[1];
-        z = event.values[2];
-        if(gameBegun) {
-            if(Math.abs(y) > Math.abs(x)) {
-                if(y > 0) {
-                    mCardsPos++;
-                    if (mCardsPos < mCards.size())
-                        card.setText(mCards.get(mCardsPos));
-                }
-            }
-        }
-    }*/
-
     //Example taken basically directly from https://stackoverflow.com/a/20340147
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-            mGravity = event.values;
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-            mGeomagnetic = event.values;
-        if (mGravity != null && mGeomagnetic != null) {
-            float R[] = new float[9];
-            float I[] = new float[9];
-            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-            if (success) {
-                float orientation[] = new float[3];
-                SensorManager.getOrientation(R, orientation);
-                if(gameBegun && orientation[2] < 0) {
-                    //Got it right
-                    if(orientation[2] < -1.1 && orientation[2] > -1.3 && (System.currentTimeMillis() - lastTime) > 2000) {
-                        if(mCardsPos >= mCards.size()) {
-                            gameOver();
-                        }
-                        else {
-                            correctCards.add(card.getText().toString());
-                            card.setText(mCards.get(mCardsPos));
-                            mCardsPos++;
-                            lastTime = System.currentTimeMillis();
-                        }
-                    }
-                    //Got it wrong
-                    else if(orientation[2] < -1.9 && orientation[2] > -2.1 && (System.currentTimeMillis() - lastTime) > 2000) {
-                        if(mCardsPos >= mCards.size()) {
-                            gameOver();
-                        }
-                        else {
-                            incorrectCards.add(card.getText().toString());
-                            card.setText(mCards.get(mCardsPos));
-                            mCardsPos++;
-                            lastTime = System.currentTimeMillis();
-                            Log.d("position", String.valueOf(mCardsPos));
-                        }
-                    }
-                }
-
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+                mGravity = event.values;
+            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+                mGeomagnetic = event.values;
+            if (mGravity != null && mGeomagnetic != null) {
+                float R[] = new float[9];
+                float I[] = new float[9];
+                boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+                if (success) {
+                    SensorManager.getOrientation(R, orientation);
             }
         }
     }
@@ -213,7 +289,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String [] projection = {"cardText"};
         String query = "SELECT cardText FROM cards WHERE cardSet ='" + cardSet + "'" ;
-        //Cursor cursor = db.query("cards", projection, null, null, null, null, null);
         Cursor cursor = db.rawQuery(query, null);
         while(cursor.moveToNext()){
             String item = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));

@@ -18,4 +18,6 @@
     <string name="dialog_title">Make a new set</string>
     <string name="cancel">Cancel</string>
     <string name="accept">Accept</string>
+    <string name="correct_cards">Cards You Got Correct</string>
+    <string name="incorrect_cards">Cards You Missed</string>
 </resources>
