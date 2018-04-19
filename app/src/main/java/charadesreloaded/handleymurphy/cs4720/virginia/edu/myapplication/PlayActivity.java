@@ -181,8 +181,10 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                hates me and won't let me do float != null
                              */
                             if(orientation[2] != 0.0f) {
+                                Log.d("orientation", String.valueOf(orientation[2]));
                                 //Got it incorrect -> these angles need to be changed. They were merely spot-checked and I have no idea what they actually equal
-                                if (orientation[2] < -1.1 && orientation[2] > -1.3) {
+                                //between -50 and -70 degrees
+                                if (orientation[2] < -.698 && orientation[2] > -1.042) {
                                     /* We will return this list to the ResultsActivity to show the
                                        player what they got wrong */
                                     incorrectCards.add(card.getText().toString());
@@ -208,7 +210,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                     lastTime = System.currentTimeMillis();
                                 }
                                 //Got it correct - > these angles should also be changed
-                                else if (orientation[2] < -1.9 && orientation[2] > -2.1) {
+                                //Between -110 and -130 degrees
+                                else if (orientation[2] < -1.92 && orientation[2] > -2.26893) {
                                     correctCards.add(card.getText().toString());
                                     mCardsPos++;
                                         runOnUiThread(new Runnable() {
