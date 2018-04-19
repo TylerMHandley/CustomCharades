@@ -33,7 +33,6 @@ public class ResultsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent redirectIntent = new Intent(this, SelectCardSetToPlayActivity.class);
-        redirectIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(redirectIntent);
     }
 

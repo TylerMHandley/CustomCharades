@@ -20,4 +20,8 @@
     <string name="accept">Accept</string>
     <string name="correct_cards">Cards You Got Correct</string>
     <string name="incorrect_cards">Cards You Missed</string>
+    <string name="share_title">Share Card Sets</string>
+    <string name="share_description">Would you like to receive or send a card set?</string>
+    <string name="send">Send a Set</string>
+    <string name="receive">Receive a Set</string>
 </resources>

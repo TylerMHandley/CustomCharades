@@ -181,7 +181,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                hates me and won't let me do float != null
                              */
                             if(orientation[2] != 0.0f) {
-                                Log.d("orientation", String.valueOf(orientation[2]));
+                                //Log.d("orientation", String.valueOf(orientation[2]));
                                 //Got it incorrect -> these angles need to be changed. They were merely spot-checked and I have no idea what they actually equal
                                 //between -50 and -70 degrees
                                 if (orientation[2] < -.698 && orientation[2] > -1.042) {

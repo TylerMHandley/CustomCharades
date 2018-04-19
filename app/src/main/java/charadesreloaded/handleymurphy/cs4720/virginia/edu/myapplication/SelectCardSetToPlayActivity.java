@@ -44,6 +44,12 @@ public class SelectCardSetToPlayActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent backIntent = new Intent(this, MainActivity.class);
+        startActivity(backIntent);
+    }
+
     private void initCards() {
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();

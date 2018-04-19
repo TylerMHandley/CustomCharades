@@ -101,7 +101,7 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", "Testing");
-        values.put("count", 0);
+        values.put("count", 100);
         db.insert("cardsets", null, values);
         values.put("title", "Woah");
         values.put("count", 0);
@@ -109,6 +109,13 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         values.put("title", "Yep");
         values.put("count", 0);
         db.insert("cardsets", null, values);
+        for(int i = 0; i < 100; i++) {
+            ContentValues values2 = new ContentValues();
+            values2.put("cardText", String.valueOf(i));
+            values2.put("cardSet", "Testing");
+            db.insert("cards", null, values2);
+        }
+
     }
 
     private void initCards() {
