@@ -33,6 +33,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     protected int playTime;
     protected boolean finished = false;
     protected boolean gameBegun = false;
+    protected boolean gamePaused = false;
     protected int mCardsPos;
     protected TextView card;
     SensorManager sensorManager;
@@ -94,7 +95,10 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     public void onPause() {
         // Add the following line to unregister the Sensor Manager
         super.onPause();
-        sensorManager.unregisterListener(this);
+        sensorManager.unregisterListener(this, mMagnetometer);
+        sensorManager.unregisterListener(this, mAccelerometer);
+        gameTimer.cancel();
+        gamePaused = true;
     }
 
     private void initializeGame() {
@@ -163,7 +167,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void run() {
                 //Since we don't want our thread to just terminate immediately, I put it in a while(true) loop
-                while(true) {
+                while(!gamePaused) {
                     //We only want to do anything if our game has begun
                     if(gameBegun) {
                         /* If we've received the "finished" flag from the game timer or we've gone
@@ -242,13 +246,14 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                     //Meh, don't really need to do anything, they actually got through all the cards
                 }
                 //End the game
-                gameOver();
+                if(!gamePaused)
+                    gameOver();
             }
         });
         //This runs the above thread definition
         game.start();
-    }
 
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
