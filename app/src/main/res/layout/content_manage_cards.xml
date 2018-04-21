@@ -8,11 +8,31 @@
     tools:context="charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication.ManageCardsActivity"
     tools:showIn="@layout/activity_manage_cards">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvCards"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <include layout="@layout/edit_item_card"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvCards"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

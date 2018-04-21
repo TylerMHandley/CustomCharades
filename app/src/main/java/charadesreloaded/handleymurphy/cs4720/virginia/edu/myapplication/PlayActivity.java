@@ -295,13 +295,14 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         incorrectCards = new ArrayList<>();
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String [] projection = {"cardText"};
-        String query = "SELECT cardText FROM cards WHERE cardSet ='" + cardSet + "'" ;
-        Cursor cursor = db.rawQuery(query, null);
+        String [] selectionArgs = {cardSet};
+        String query = "SELECT cardText FROM cards WHERE cardSet=?";
+        Cursor cursor = db.rawQuery(query, selectionArgs);
         while(cursor.moveToNext()){
             String item = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));
             mCards.add(item);
         }
+        cursor.close();
         Collections.shuffle(mCards);
     }
 }

@@ -24,4 +24,6 @@
     <string name="share_description">Would you like to receive or send a card set?</string>
     <string name="send">Send a Set</string>
     <string name="receive">Receive a Set</string>
+    <string name="delete_card_set">Are you sure you want to delete your card set %1$s?</string>
+    <string name="delete">Delete</string>
 </resources>

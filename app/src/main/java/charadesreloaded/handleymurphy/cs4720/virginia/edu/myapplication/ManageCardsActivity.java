@@ -1,6 +1,7 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,27 +10,54 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.sql.SQLData;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class ManageCardsActivity extends AppCompatActivity {
-    //private int numLines = -1;
+
+    private boolean titleChanged = false;
     protected ArrayList<String> mCards;
+    protected String newCardSetName;
     protected String cardSet;
     protected CardAdapter adapter;
     protected ArrayList<String> startSet;
+    protected EditText title;
+
+    private TextWatcher titleTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            //no ops
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            titleChanged = true;
+            newCardSetName = title.getText().toString();
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            //no ops
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +80,35 @@ public class ManageCardsActivity extends AppCompatActivity {
         rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         adapter.notifyDataSetChanged();
+
+        title = (EditText) findViewById(R.id.edit_card_name);
+        title.addTextChangedListener(titleTextWatcher);
+
+        ImageView deleteTitle = (ImageView) findViewById(R.id.deleteButton);
+        deleteTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(findViewById(android.R.id.content).getContext());
+                builder.setTitle("Delete " + cardSet + "?");
+                builder.setMessage(getApplicationContext().getString(R.string.delete_card_set, cardSet));
+                builder.setCancelable(true);
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+                builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deleteCardSet();
+                    }
+                });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
+        title.setText(cardSet);
     }
 /*
     @Override
@@ -71,6 +128,14 @@ public class ManageCardsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
        int id = item.getItemId();
        if (id == R.id.save_button){
+           if(titleChanged)
+               titleChange();
+
+           //Remove duplicate entries to play nice and handle user errors without them even knowing
+           //Maybe that's bad?
+           Set<String> removeDuplicates = new LinkedHashSet<>(mCards);
+           mCards = new ArrayList<String>(removeDuplicates);
+
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
            ContentValues values = new ContentValues();
@@ -82,19 +147,26 @@ public class ManageCardsActivity extends AppCompatActivity {
                if (i < orgLength && i < length && !startSet.get(i).equals(mCards.get(i))) {
                    //UPDATE
                    values.put("cardText",mCards.get(i));
-                   db.update("cards", values, "cardText='"+startSet.get(i)+"' AND cardSet='" + cardSet + "'" , null);
+                   String whereArgs[] = {startSet.get(i), cardSet};
+
+                   int rowsaffected = db.update("cards", values, "cardText=? AND cardSet=?", whereArgs);
                }else if (i < orgLength && i >= length){
                    //DELETE
                    Log.e("Delete", startSet.get(i));
-                   db.delete("cards", "cardText='"+startSet.get(i)+ "' AND cardSet='" + cardSet + "'", null);
-                   db.execSQL("UPDATE cardsets SET count = count - 1 WHERE title ='" + cardSet + "' and count > 0");
+                   String whereArgs[] = {startSet.get(i), cardSet};
+                   db.delete("cards", "cardText=? AND cardSet=?", whereArgs);
+
+                   String whereArgs2[] = {cardSet};
+                   db.execSQL("UPDATE cardsets SET count = count-1 WHERE title=? AND count > 0", whereArgs2);
                }else if (i >= orgLength && i < length ) {
                    //ADD
                    if (!mCards.get(i).equals("")) {
                        values.put("cardText", mCards.get(i));
                        values.put("cardSet", cardSet);
-                       db.execSQL("UPDATE cardsets SET count = count + 1 WHERE title = '" + cardSet + "'");
                        db.insert("cards", null, values);
+
+                       String whereArgs[] = {cardSet};
+                       db.execSQL("UPDATE cardsets SET count = count+1 WHERE title=?", whereArgs);
                    }
                }
 
@@ -111,15 +183,16 @@ public class ManageCardsActivity extends AppCompatActivity {
     private void initCards(){
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String [] projection = {"cardText"};
-        String query = "SELECT cardText FROM cards WHERE cardSet ='" + cardSet + "'" ;
+        String [] selectionArgs = {cardSet};
+        String query = "SELECT cardText FROM cards WHERE cardSet=?";
         //Cursor cursor = db.query("cards", projection, null, null, null, null, null);
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, selectionArgs);
         while(cursor.moveToNext()){
             String item = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));
             mCards.add(item);
         }
         this.startSet = new ArrayList<>(mCards);
+        cursor.close();
 
     }
     public void newLine(View view){
@@ -142,5 +215,27 @@ public class ManageCardsActivity extends AppCompatActivity {
         String str = edit.getText().toString();
         this.mCards.remove(str);
         this.adapter.notifyDataSetChanged();
+    }
+
+    private void deleteCardSet() {
+        CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String whereArgs[] = {cardSet};
+        db.delete("cards", "cardSet=?", whereArgs);
+        db.delete("cardsets", "title=?", whereArgs);
+        finish();
+    }
+
+    private void titleChange() {
+        CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues cardsValues = new ContentValues();
+        ContentValues titlesValues = new ContentValues();
+        titlesValues.put("title", newCardSetName);
+        cardsValues.put("cardSet", newCardSetName);
+        String whereArgs[] = {cardSet};
+        db.update("cardsets", titlesValues, "title=?", whereArgs);
+        db.update("cards", cardsValues, "cardSet=?", whereArgs);
+        cardSet = newCardSetName;
     }
 }

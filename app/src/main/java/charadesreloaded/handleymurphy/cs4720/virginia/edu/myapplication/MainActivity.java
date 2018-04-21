@@ -107,24 +107,33 @@ public class MainActivity extends AppCompatActivity {
                 dialogInterface.cancel();
             }
         });
-        builder.setCancelable(true).setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.accept, null);
+        final AlertDialog alert = builder.create();
+        alert.show();
+
+        alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent addSetIntent = new Intent(thisView.getContext(), ManageCardsActivity.class);
+            public void onClick(View view) {
+                Intent addSetIntent = new Intent(view.getContext(), ManageCardsActivity.class);
                 EditText textField = dialogView.findViewById(R.id.cardSetName);
                 String setName = textField.getText().toString();
                 addSetIntent.putExtra("cardSet", setName);
-                CardDatabaseHelper dbHelper = new CardDatabaseHelper(thisView.getContext());
+                CardDatabaseHelper dbHelper = new CardDatabaseHelper(view.getContext());
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("title", setName);
                 values.put("count", 0);
-                db.insert("cardsets", null,values);
-                startActivity(addSetIntent);
+                try {
+                    db.insertOrThrow("cardsets", null, values);
+                    startActivity(addSetIntent);
+                    alert.dismiss();
+                }
+                catch(android.database.sqlite.SQLiteConstraintException e) {
+                    textField.setError("There's already a card set called " + setName);
+                }
             }
         });
-        AlertDialog alert = builder.create();
-        alert.show();
+
     }
     //onClick method to go to play selection screen
     public void goToPlay(View view) {

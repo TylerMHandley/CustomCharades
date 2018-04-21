@@ -39,8 +39,6 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Your Card Sets");
         mCards = new ArrayList<>();
-        //TODO: Remove this method call
-        fakeInitCards();
         
         initCards();
 
@@ -60,9 +58,13 @@ public class ManageCardSetsActivity extends AppCompatActivity {
                                                   dialogInterface.cancel();
                                               }
                                           });
-                                          builder.setCancelable(true).setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                                          builder.setPositiveButton(R.string.accept, null);
+                                          final AlertDialog alert = builder.create();
+                                          alert.show();
+                                          //This seems dumb, but I have to set the on click listener after the button is created in order to show the error in the alert dialog
+                                          alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                                               @Override
-                                              public void onClick(DialogInterface dialogInterface, int i) {
+                                              public void onClick(View view) {
                                                   Intent addSetIntent = new Intent(view.getContext(), ManageCardsActivity.class);
                                                   EditText textField = dialogView.findViewById(R.id.cardSetName);
                                                   String setName = textField.getText().toString();
@@ -72,12 +74,16 @@ public class ManageCardSetsActivity extends AppCompatActivity {
                                                   ContentValues values = new ContentValues();
                                                   values.put("title", setName);
                                                   values.put("count", 0);
-                                                  db.insert("cardsets", null,values);
-                                                  startActivity(addSetIntent);
+                                                  try {
+                                                      db.insertOrThrow("cardsets", null, values);
+                                                      startActivity(addSetIntent);
+                                                      alert.dismiss();
+                                                  }
+                                                  catch(android.database.sqlite.SQLiteConstraintException e) {
+                                                      textField.setError("There's already a card set called " + setName);
+                                                  }
                                               }
                                           });
-                                          AlertDialog alert = builder.create();
-                                          alert.show();
                                       }
                                   });
 
@@ -95,27 +101,12 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         return true;
     }
 
-    //TODO: Remove this method, this is only for testing
-    private void fakeInitCards() {
-        CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("title", "Testing");
-        values.put("count", 100);
-        db.insert("cardsets", null, values);
-        values.put("title", "Woah");
-        values.put("count", 0);
-        db.insert("cardsets", null, values);
-        values.put("title", "Yep");
-        values.put("count", 0);
-        db.insert("cardsets", null, values);
-        for(int i = 0; i < 100; i++) {
-            ContentValues values2 = new ContentValues();
-            values2.put("cardText", String.valueOf(i));
-            values2.put("cardSet", "Testing");
-            db.insert("cards", null, values2);
-        }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCards.clear();
+        initCards();
+        adapter.notifyDataSetChanged();
     }
 
     private void initCards() {
