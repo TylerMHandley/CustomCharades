@@ -17,7 +17,9 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:textAllCaps="false"
+            android:text="@string/card_set_title" />
 
         <include layout="@layout/edit_item_card"/>
 
@@ -25,7 +27,9 @@
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:textAllCaps="false"
+            android:text="@string/cards_in_this_set" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvCards"

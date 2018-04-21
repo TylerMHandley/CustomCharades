@@ -26,4 +26,6 @@
     <string name="receive">Receive a Set</string>
     <string name="delete_card_set">Are you sure you want to delete your card set %1$s?</string>
     <string name="delete">Delete</string>
+    <string name="card_set_title">Card Set Title</string>
+    <string name="cards_in_this_set">Cards in This Set</string>
 </resources>

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -21,12 +20,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import java.sql.SQLData;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -237,5 +233,7 @@ public class ManageCardsActivity extends AppCompatActivity {
         db.update("cardsets", titlesValues, "title=?", whereArgs);
         db.update("cards", cardsValues, "cardSet=?", whereArgs);
         cardSet = newCardSetName;
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(cardSet);
     }
 }
