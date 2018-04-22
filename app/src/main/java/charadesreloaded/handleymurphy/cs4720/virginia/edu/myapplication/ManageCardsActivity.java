@@ -27,6 +27,7 @@ import android.widget.ImageView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -144,8 +145,13 @@ public class ManageCardsActivity extends AppCompatActivity {
 
            //Remove duplicate entries to play nice and handle user errors without them even knowing
            //Maybe that's bad?
-           Set<String> removeDuplicates = new LinkedHashSet<>(mCards);
-           mCards = new ArrayList<String>(removeDuplicates);
+           //Set<String> removeDuplicates = new LinkedHashSet<>(mCards);
+           ArrayList<String> removeDuplicates = new ArrayList<>();
+           while(!mCards.isEmpty()) {
+               removeDuplicates.add(mCards.get(0));
+               mCards.removeAll(Collections.singleton(mCards.get(0)));
+           }
+           mCards.addAll(removeDuplicates);
 
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
