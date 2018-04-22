@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
                 doKeepDialog(alert);
                 break;
             case R.id.settings:
+                Intent shareIntent = new Intent(this, SettingsActivity.class);
+                startActivity(shareIntent);
                 break;
         }
         return true;

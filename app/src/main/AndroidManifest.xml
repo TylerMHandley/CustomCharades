@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication">
+
     <uses-permission android:name="android.permission.NFC" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,7 +20,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".ManageCardSetsActivity"
@@ -37,7 +38,8 @@
             android:label="@string/title_activity_play"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ResultsActivity"></activity>
+        <activity android:name=".ResultsActivity" />
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>

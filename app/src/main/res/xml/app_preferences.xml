@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="Game Timer">
+
+        <EditTextPreference
+            android:key="game_time"
+            android:title="Game Time"
+            android:summary="Number of Seconds in a Game"
+            android:dialogMessage="How many seconds should each game last?"
+            android:inputType="number"
+            />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="show_timer"
+            android:title="Show Game Timer"
+            android:summary="Show the countdown timer when playing."
+            android:defaultValue="true" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="Card Settings">
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="limit_total_cards"
+            android:title="Limit Cards Per Game"
+            android:summary="Limit the total number of cards that can be shown in a game."
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="limit_total_cards_number"
+            android:title="Cards Per Game"
+            android:summary="Set the number of cards to be shown in a game."
+            android:dialogMessage="How many cards should be shown until the game is over?"
+            android:inputType="number"
+            android:dependency="limit_total_cards"
+            />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="limit_correct_cards"
+            android:title="Correct Cards Limit"
+            android:summary="Set the game to finish after a certain number of cards have been guessed correctly."
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="limit_correct_cards_number"
+            android:title="Cards to Win"
+            android:summary="Set the number of cards that need to be guessed correctly to win the game."
+            android:dialogMessage="How many cards should the player get right to win the game?"
+            android:inputType="number"
+            android:dependency="limit_correct_cards"
+            />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

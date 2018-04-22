@@ -70,7 +70,7 @@ public class ManageCardsActivity extends AppCompatActivity {
         Intent intentBundle = getIntent();
         this.cardSet = intentBundle.getStringExtra("cardSet");
         actionBar.setTitle(cardSet);
-        
+
         if(savedInstanceState != null)
             mCards = (ArrayList<String>) savedInstanceState.get("mCards");
         else {

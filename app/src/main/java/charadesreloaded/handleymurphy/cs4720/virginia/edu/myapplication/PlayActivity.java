@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManagerFix;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -30,10 +31,16 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     protected ArrayList<String> correctCards;
     protected ArrayList<String> incorrectCards;
     protected String cardSet;
+    protected SharedPreferences loadPrefs;
     protected int playTime;
+    protected int totalCardsLimit;
+    protected int correctCardsLimit;
     protected boolean finished = false;
     protected boolean gameBegun = false;
     protected boolean gamePaused = false;
+    protected boolean timerEnabled;
+    protected boolean correctLimited;
+    protected boolean totalLimited;
     protected int mCardsPos;
     protected TextView card;
     SensorManager sensorManager;
@@ -62,12 +69,23 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         orientation = new float[3];
 
         //Get player preferences
-        SharedPreferences loadPrefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
-        playTime = loadPrefs.getInt("gameTime", 60);
+        loadPrefs = PreferenceManagerFix.getDefaultSharedPreferences(this);
+        playTime = Integer.parseInt(loadPrefs.getString("game_time", "60"));
+        timerEnabled = loadPrefs.getBoolean("show_timer", true);
+        totalLimited = loadPrefs.getBoolean("limit_total_cards", false);
+        correctLimited = loadPrefs.getBoolean("limit_correct_cards", false);
 
         //Set up game cards
         this.cardSet = getIntent().getStringExtra("cardSet");
         initCards();
+
+        /*String mCardsSize = String.valueOf(mCards.size());
+        String test = loadPrefs.getString("limit_total_cards_number", mCardsSize);
+        Log.d("debuggin'", test);
+        totalCardsLimit = Integer.parseInt(test);
+        System.out.println(totalCardsLimit);*/
+
+
         mCardsPos = 0;
         //This is where we put the current game card
         this.card = findViewById(R.id.displayedCard);
@@ -114,9 +132,11 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         gameTimer = new CountDownTimer((long) playTime* 1000, 1000) {
             @Override
             public void onTick(long l) {
-                //Every time the clock ticks (every second), show the user the new time remaining.
-                String titleText = getString(R.string.countdown_timer, l/1000);
-                title.setText(titleText);
+                if(timerEnabled) {
+                    //Every time the clock ticks (every second), show the user the new time remaining.
+                    String titleText = getString(R.string.countdown_timer, l / 1000);
+                    title.setText(titleText);
+                }
             }
             @Override
             public void onFinish() {
@@ -217,6 +237,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                 //Between -110 and -130 degrees
                                 else if (orientation[2] < -1.92 && orientation[2] > -2.26893) {
                                     correctCards.add(card.getText().toString());
+                                    if(correctLimited && correctCards.size() == correctCardsLimit)
+                                        break;
                                     mCardsPos++;
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -240,7 +262,8 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                 /* Let's say the timer ended before we reached the last card. Add the last card shown
                    to the 'incorrect' list */
                 try {
-                    incorrectCards.add(mCards.get(mCardsPos));
+                    if(finished)
+                        incorrectCards.add(mCards.get(mCardsPos));
                 }
                 catch (IndexOutOfBoundsException e) {
                     //Meh, don't really need to do anything, they actually got through all the cards
@@ -304,5 +327,12 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         }
         cursor.close();
         Collections.shuffle(mCards);
+
+        //Truncate the list to the user preferences
+        totalCardsLimit = Integer.parseInt(loadPrefs.getString("limit_total_cards_number", String.valueOf(mCards.size())));
+        correctCardsLimit = Integer.parseInt(loadPrefs.getString("limit_correct_cards_number", String.valueOf(mCards.size())));
+
+        if(totalLimited && totalCardsLimit < mCards.size())
+            mCards.subList(totalCardsLimit, mCards.size()).clear();
     }
 }
