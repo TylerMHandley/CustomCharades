@@ -115,6 +115,11 @@ public class ManageCardsActivity extends AppCompatActivity {
             }
         });
         title.setText(cardSet);
+
+        if(mCards.isEmpty()) {
+            rvCards.setVisibility(View.GONE);
+            findViewById(R.id.manageCardsEmtpy).setVisibility(View.VISIBLE);
+        }
     }
 /*
     @Override
@@ -217,6 +222,9 @@ public class ManageCardsActivity extends AppCompatActivity {
         this.adapter.notifyDataSetChanged();
         //Make the app focus on the newly added card
         this.rvCards.smoothScrollToPosition(mCards.size()-1);
+
+        rvCards.setVisibility(View.VISIBLE);
+        findViewById(R.id.manageCardsEmtpy).setVisibility(View.GONE);
     }
     public void delete(View view){
         EditText edit = (EditText) findViewById(R.id.edit_card_name);

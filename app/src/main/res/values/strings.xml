@@ -28,4 +28,6 @@
     <string name="delete">Delete</string>
     <string name="card_set_title">Card Set Title</string>
     <string name="cards_in_this_set">Cards in This Set</string>
+    <string name="manage_card_sets_empty">You have no card sets yet! Create one using the plus button below.</string>
+    <string name="manage_cards_empty">This card set doesn\'t have any cards yet. Add some with the plus button below!</string>
 </resources>
