@@ -72,8 +72,10 @@ public class ManageCardsActivity extends AppCompatActivity {
         this.cardSet = intentBundle.getStringExtra("cardSet");
         actionBar.setTitle(cardSet);
 
-        if(savedInstanceState != null)
+        if(savedInstanceState != null) {
             mCards = (ArrayList<String>) savedInstanceState.get("mCards");
+            startSet = (ArrayList<String>) savedInstanceState.get("startSet");
+        }
         else {
             mCards = new ArrayList<>();
             initCards();
@@ -243,6 +245,7 @@ public class ManageCardsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("mCards", mCards);
+        outState.putSerializable("startSet", startSet);
     }
 
     private void deleteCardSet() {
