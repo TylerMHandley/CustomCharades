@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -41,6 +42,7 @@ public class ManageCardsActivity extends AppCompatActivity {
     protected ArrayList<String> startSet;
     protected EditText title;
     protected RecyclerView rvCards;
+    protected ArrayList<String> catchCards;
 
     private TextWatcher titleTextWatcher = new TextWatcher() {
         @Override
@@ -152,7 +154,7 @@ public class ManageCardsActivity extends AppCompatActivity {
                mCards.removeAll(Collections.singleton(mCards.get(0)));
            }
            mCards.addAll(removeDuplicates);
-
+           this.catchCards = new ArrayList<String>();
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
            ContentValues values = new ContentValues();
@@ -163,10 +165,18 @@ public class ManageCardsActivity extends AppCompatActivity {
            for (int i =max;i>=0;i--){
                if (i < orgLength && i < length && !startSet.get(i).equals(mCards.get(i))) {
                    //UPDATE
-                   values.put("cardText",mCards.get(i));
                    String whereArgs[] = {startSet.get(i), cardSet};
+                   try{
+                       values.put("cardText",mCards.get(i));
+                       int rowsaffected = db.update("cards", values, "cardText=? AND cardSet=?", whereArgs);
+                   }catch (SQLiteConstraintException e){
+                       catchCards.add(mCards.get(i));
+                       //String whereArgs[] = {startSet.get(i), cardSet};
+                       db.delete("cards", "cardText=? AND cardSet=?", whereArgs);
+                   }
 
-                   int rowsaffected = db.update("cards", values, "cardText=? AND cardSet=?", whereArgs);
+
+
                }else if (i < orgLength && i >= length){
                    //DELETE
                    Log.e("Delete", startSet.get(i));
@@ -178,15 +188,34 @@ public class ManageCardsActivity extends AppCompatActivity {
                }else if (i >= orgLength && i < length ) {
                    //ADD
                    if (!mCards.get(i).equals("")) {
-                       values.put("cardText", mCards.get(i));
-                       values.put("cardSet", cardSet);
-                       db.insert("cards", null, values);
-
+                       try{
+                           values.put("cardText", mCards.get(i));
+                           values.put("cardSet", cardSet);
+                           db.insert("cards", null, values);
+                       }catch (SQLiteConstraintException e){
+                           catchCards.add(mCards.get(i));
+                       }
                        String whereArgs[] = {cardSet};
                        db.execSQL("UPDATE cardsets SET count = count+1 WHERE title=?", whereArgs);
                    }
                }
-
+           }
+           //Handle the Catch
+//           if (!catchCardsUpdate.isEmpty()){
+//               int len = catchCardsUpdate.size();
+//               for (int i= 0; i <len; i++){
+//                   values.put("cardText", catchCards.get(i));
+//                   values.put("cardSet", cardSet);
+//                   db.insert("cards", null, values);
+//               }
+//           }
+           if (!catchCards.isEmpty()){
+               int len = catchCards.size();
+               for (int i= 0; i <len; i++){
+                   values.put("cardText", catchCards.get(i));
+                   values.put("cardSet", cardSet);
+                   db.insert("cards", null, values);
+               }
            }
            Snackbar.make(findViewById(R.id.coordlayout), "Saved Changes", Snackbar.LENGTH_SHORT).show();
        }
@@ -201,7 +230,7 @@ public class ManageCardsActivity extends AppCompatActivity {
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String [] selectionArgs = {cardSet};
-        String query = "SELECT cardText FROM cards WHERE cardSet=?";
+        String query = "SELECT cardText FROM cards WHERE cardSet=? ORDER BY cardText";
         //Cursor cursor = db.query("cards", projection, null, null, null, null, null);
         Cursor cursor = db.rawQuery(query, selectionArgs);
         while(cursor.moveToNext()){
