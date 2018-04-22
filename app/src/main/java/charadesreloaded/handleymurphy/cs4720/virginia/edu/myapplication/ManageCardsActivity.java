@@ -27,6 +27,7 @@ import android.widget.ImageView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -115,6 +116,11 @@ public class ManageCardsActivity extends AppCompatActivity {
             }
         });
         title.setText(cardSet);
+
+        if(mCards.isEmpty()) {
+            rvCards.setVisibility(View.GONE);
+            findViewById(R.id.manageCardsEmtpy).setVisibility(View.VISIBLE);
+        }
     }
 /*
     @Override
@@ -139,8 +145,13 @@ public class ManageCardsActivity extends AppCompatActivity {
 
            //Remove duplicate entries to play nice and handle user errors without them even knowing
            //Maybe that's bad?
-           Set<String> removeDuplicates = new LinkedHashSet<>(mCards);
-           mCards = new ArrayList<String>(removeDuplicates);
+           //Set<String> removeDuplicates = new LinkedHashSet<>(mCards);
+           ArrayList<String> removeDuplicates = new ArrayList<>();
+           while(!mCards.isEmpty()) {
+               removeDuplicates.add(mCards.get(0));
+               mCards.removeAll(Collections.singleton(mCards.get(0)));
+           }
+           mCards.addAll(removeDuplicates);
 
            CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
            SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -217,6 +228,9 @@ public class ManageCardsActivity extends AppCompatActivity {
         this.adapter.notifyDataSetChanged();
         //Make the app focus on the newly added card
         this.rvCards.smoothScrollToPosition(mCards.size()-1);
+
+        rvCards.setVisibility(View.VISIBLE);
+        findViewById(R.id.manageCardsEmtpy).setVisibility(View.GONE);
     }
     public void delete(View view){
         EditText edit = (EditText) findViewById(R.id.edit_card_name);

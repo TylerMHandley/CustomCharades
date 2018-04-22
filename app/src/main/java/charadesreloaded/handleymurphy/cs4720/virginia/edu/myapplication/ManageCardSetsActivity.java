@@ -96,6 +96,11 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         rvCards.setAdapter(adapter);
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         adapter.notifyDataSetChanged();
+
+        if(mCards.isEmpty()) {
+            rvCards.setVisibility(View.GONE);
+            findViewById(R.id.manageCardSetsEmtpy).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -110,6 +115,16 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         mCards.clear();
         initCards();
         adapter.notifyDataSetChanged();
+
+        RecyclerView rvCards = findViewById(R.id.rvCards);
+        if(mCards.isEmpty()) {
+            rvCards.setVisibility(View.GONE);
+            findViewById(R.id.manageCardSetsEmtpy).setVisibility(View.VISIBLE);
+            }
+        else {
+            rvCards.setVisibility(View.VISIBLE);
+            findViewById(R.id.manageCardSetsEmtpy).setVisibility(View.GONE);
+            }
     }
 
     private void initCards() {
