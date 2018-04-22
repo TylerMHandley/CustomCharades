@@ -91,6 +91,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         mCards.remove(position);
         notifyDataSetChanged();
     }
+
+    @Override
+    public void onViewAttachedToWindow(CardAdapter.ViewHolder viewHolder) {
+        EditText editView = viewHolder.getEditView();
+        if(editView != null)
+            if(viewHolder.getAdapterPosition() == mCards.size() - 1)
+                editView.requestFocus();
+    }
+
     @Override
     public void onBindViewHolder(CardAdapter.ViewHolder viewHolder, final int position) {
         final String item = mCards.get(position);
@@ -143,8 +152,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 editText.setHint(R.string.addCardText);
             }
         }
-
     }
+
 
     @Override
     public int getItemCount() {

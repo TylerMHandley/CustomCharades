@@ -1,6 +1,7 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -39,7 +41,7 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Your Card Sets");
         mCards = new ArrayList<>();
-        
+
         initCards();
 
         FloatingActionButton addSet = (FloatingActionButton) findViewById(R.id.addSet);
@@ -84,6 +86,7 @@ public class ManageCardSetsActivity extends AppCompatActivity {
                                                   }
                                               }
                                           });
+                                          doKeepDialog(alert);
                                       }
                                   });
 
@@ -119,6 +122,15 @@ public class ManageCardSetsActivity extends AppCompatActivity {
             mCards.add(item);
         }
         cursor.close();
+    }
+
+    //Refer to: https://stackoverflow.com/a/27311231
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
 
 }

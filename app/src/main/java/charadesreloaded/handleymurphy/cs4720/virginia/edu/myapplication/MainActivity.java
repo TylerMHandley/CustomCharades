@@ -1,6 +1,7 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+                doKeepDialog(alert);
                 break;
             case R.id.settings:
                 break;
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.accept, null);
         final AlertDialog alert = builder.create();
         alert.show();
+        doKeepDialog(alert);
 
         alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +143,16 @@ public class MainActivity extends AppCompatActivity {
     public void goToPlay(View view) {
         final Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
         startActivity(playIntent);
+    }
+
+
+    //Refer to: https://stackoverflow.com/a/27311231
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,9 +21,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -36,6 +39,7 @@ public class ManageCardsActivity extends AppCompatActivity {
     protected CardAdapter adapter;
     protected ArrayList<String> startSet;
     protected EditText title;
+    protected RecyclerView rvCards;
 
     private TextWatcher titleTextWatcher = new TextWatcher() {
         @Override
@@ -66,11 +70,16 @@ public class ManageCardsActivity extends AppCompatActivity {
         Intent intentBundle = getIntent();
         this.cardSet = intentBundle.getStringExtra("cardSet");
         actionBar.setTitle(cardSet);
-        mCards = new ArrayList<>();
-        initCards();
+        
+        if(savedInstanceState != null)
+            mCards = (ArrayList<String>) savedInstanceState.get("mCards");
+        else {
+            mCards = new ArrayList<>();
+            initCards();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        RecyclerView rvCards = findViewById(R.id.rvCards);
+        rvCards = findViewById(R.id.rvCards);
         adapter = new CardAdapter(mCards, this, CardAdapter.EDIT_CARD);
 
         rvCards.setAdapter(adapter);
@@ -102,6 +111,7 @@ public class ManageCardsActivity extends AppCompatActivity {
                 });
                 android.app.AlertDialog alert = builder.create();
                 alert.show();
+                doKeepDialog(alert);
             }
         });
         title.setText(cardSet);
@@ -205,12 +215,20 @@ public class ManageCardsActivity extends AppCompatActivity {
         */
         this.mCards.add("");
         this.adapter.notifyDataSetChanged();
+        //Make the app focus on the newly added card
+        this.rvCards.smoothScrollToPosition(mCards.size()-1);
     }
     public void delete(View view){
         EditText edit = (EditText) findViewById(R.id.edit_card_name);
         String str = edit.getText().toString();
         this.mCards.remove(str);
         this.adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("mCards", mCards);
     }
 
     private void deleteCardSet() {
@@ -235,5 +253,14 @@ public class ManageCardsActivity extends AppCompatActivity {
         cardSet = newCardSetName;
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(cardSet);
+    }
+
+    //Refer to: https://stackoverflow.com/a/27311231
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
 }
