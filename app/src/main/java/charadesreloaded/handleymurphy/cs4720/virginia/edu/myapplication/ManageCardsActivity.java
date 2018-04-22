@@ -162,7 +162,7 @@ public class ManageCardsActivity extends AppCompatActivity {
            int length = mCards.size();
            int orgLength = startSet.size();
            int max = Math.max(length, orgLength);
-           for (int i =0;i<max;i++){
+           for (int i =max;i>=0;i--){
                if (i < orgLength && i < length && !startSet.get(i).equals(mCards.get(i))) {
                    //UPDATE
                    values.put("cardText",mCards.get(i));
