@@ -40,7 +40,15 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ResultsActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".ReceiveActivity"></activity>
+        <activity
+            android:name=".ReceiveActivity"
+            android:label="Android Beam Viewer">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!--<data android:mimeType="mime-type" />-->
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
