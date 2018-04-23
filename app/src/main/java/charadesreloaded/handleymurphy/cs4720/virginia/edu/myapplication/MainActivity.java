@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -28,14 +29,14 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS_NAME = "CharadesPrefsFile";
-    private NfcAdapter mNfcAdapter;
-
+    private Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mContext = this;
         /*if(!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
             //we do not have nfc
             findViewById(R.id.share).setVisibility(View.GONE);
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             //we have the nfc we need
 
         }*/
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
 
     }
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        Intent beginNfc = new Intent(mContext, SelectCardSetToShare.class);
                     }
                 });
                 AlertDialog alert = builder.create();
@@ -166,5 +167,4 @@ public class MainActivity extends AppCompatActivity {
             Log.d("it works?", "yeah");
         }
     }
-
 }
