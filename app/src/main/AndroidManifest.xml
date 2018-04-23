@@ -40,6 +40,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ResultsActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".ReceiveActivity"></activity>
     </application>
 
 </manifest>
