@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     public static final int PLAY_GAME = 1;
     public static final int VIEW_CARDSET = 2;
     public static final int EDIT_CARD = 3;
+    public static final int SHARE_CARDSET= 4;
     private List<String> beforeUpdate;
 
 
@@ -125,7 +129,27 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
                         case EDIT_CARD:
                             break;
+                        case SHARE_CARDSET:
 
+                            try{
+                                String fileName = item+"toShare.charades";
+                                File cardSetFile = new File(mContext.getFilesDir(), fileName);
+                                FileWriter writer = new FileWriter(cardSetFile);
+                                int len = mCards.size();
+                                for(int i = 0; i < len; i++){
+                                    writer.append(mCards.get(i));
+                                }
+                                writer.flush();
+                                writer.close();
+                                Intent nfcIntent = new Intent(mContext, MakingConnection.class);
+                                nfcIntent.putExtra("fileName", fileName);
+                                mContext.startActivity(nfcIntent);
+
+                            }catch(Exception e){
+
+                            }
+
+                            break;
                         default:
                             break; //We shouldn't get here ever, but if we do add some code to basically crash I guess
                     }
