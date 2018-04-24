@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 public class ManageCardSetsActivity extends AppCompatActivity {
     protected ArrayList<String> mCards;
     protected CardAdapter adapter;
+    protected LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +96,10 @@ public class ManageCardSetsActivity extends AppCompatActivity {
         adapter = new CardAdapter(mCards, this, CardAdapter.VIEW_CARDSET);
 
         rvCards.setAdapter(adapter);
-        rvCards.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        rvCards.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvCards.getContext(), linearLayoutManager.getOrientation());
+        rvCards.addItemDecoration(dividerItemDecoration);
         adapter.notifyDataSetChanged();
 
         if(mCards.isEmpty()) {
