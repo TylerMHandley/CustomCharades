@@ -20,6 +20,7 @@ public class ResultsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle(R.string.results);
         setContentView(R.layout.activity_results);
         ArrayList<String> correct_cards = (ArrayList<String>) getIntent().getSerializableExtra("correct");
         ArrayList<String> incorrect_cards = (ArrayList<String>) getIntent().getSerializableExtra("incorrect");
@@ -55,5 +56,15 @@ public class ResultsActivity extends AppCompatActivity {
             mListView.setLayoutParams(params);
             mListView.requestLayout();
         }
+    }
+
+    public void returnToMain(View view) {
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        startActivity(mainIntent);
+    }
+
+    public void returnToPlay(View view) {
+        Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
+        startActivity(playIntent);
     }
 }

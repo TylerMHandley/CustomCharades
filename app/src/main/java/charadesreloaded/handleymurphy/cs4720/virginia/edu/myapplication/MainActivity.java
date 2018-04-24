@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -23,13 +24,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    public static final String PREFS_NAME = "CharadesPrefsFile";
+    private Button createSetButton;
     private Context mContext;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mContext = this;
+        createSetButton = findViewById(R.id.create_text);
         /*if(!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC)) {
             //we do not have nfc
             findViewById(R.id.share).setVisibility(View.GONE);
@@ -144,8 +151,40 @@ public class MainActivity extends AppCompatActivity {
     }
     //onClick method to go to play selection screen
     public void goToPlay(View view) {
-        final Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
-        startActivity(playIntent);
+        int numCardSets = getNumCardSets();
+        if(numCardSets > 0) {
+            final Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
+            startActivity(playIntent);
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setMessage(R.string.no_playable_sets);
+            builder.setTitle(R.string.no_playable_sets_title);
+            builder.setCancelable(true);
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+            builder.setPositiveButton(R.string.create_cards_dialog, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    createSetButton.callOnClick();
+                }
+            });
+            final AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+    private int getNumCardSets() {
+        CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String [] projection = {"title"};
+        String whereClause = "count > 0";
+        Cursor cursor = db.query("cardsets", projection, whereClause, null, null, null, "title ASC");
+        return cursor.getCount();
     }
 
 

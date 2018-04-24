@@ -30,9 +30,9 @@ public class ReceiveActivity extends AppCompatActivity {
         if (TextUtils.equals(action, Intent.ACTION_VIEW)){
             Uri beamUri = mIntent.getData();
             if (TextUtils.equals(beamUri.getScheme(), "file")){
-                mParentPath = handleFileUri(beamUri);
+                //mParentPath = handleFileUri(beamUri);
             }else if (TextUtils.equals(beamUri.getScheme(), "content")){
-                mParentPath = handleContentUri(beamUri);
+                //mParentPath = handleContentUri(beamUri);
             }
         }
     }

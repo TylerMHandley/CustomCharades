@@ -30,4 +30,10 @@
     <string name="cards_in_this_set">Cards in This Set</string>
     <string name="manage_card_sets_empty">You have no card sets yet! Create one using the plus button below.</string>
     <string name="manage_cards_empty">This card set doesn\'t have any cards yet. Add some with the plus button below!</string>
+    <string name="no_playable_sets">You don\'t have any sets with one or more cards in them yet. Would you like to add a new set?</string>
+    <string name="no_playable_sets_title">No Sets to Play With</string>
+    <string name="create_cards_dialog">Create a New Set</string>
+    <string name="play_again">Play Again</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="results">Your Results</string>
 </resources>
