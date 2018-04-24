@@ -164,7 +164,7 @@ public class ManageCardsActivity extends AppCompatActivity {
            int length = mCards.size();
            int orgLength = startSet.size();
            int max = Math.max(length, orgLength);
-           for (int i =max;i>=0;i--){
+           for (int i =max;i>= 0;i--){
                if (i < orgLength && i < length && !startSet.get(i).equals(mCards.get(i))) {
                    //UPDATE
                    String whereArgs[] = {startSet.get(i), cardSet};
@@ -219,6 +219,8 @@ public class ManageCardsActivity extends AppCompatActivity {
                    db.insert("cards", null, values);
                }
            }
+           this.startSet.clear();
+           this.startSet.addAll(this.mCards);
            Snackbar.make(findViewById(R.id.coordlayout), "Saved Changes", Snackbar.LENGTH_SHORT).show();
        }
        else if(id == android.R.id.home){
