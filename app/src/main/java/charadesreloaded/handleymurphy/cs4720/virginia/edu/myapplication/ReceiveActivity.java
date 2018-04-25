@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +27,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private File mParentPath;
     private Intent mIntent;
     private static final int READ_REQUEST_CODE = 42;
+    private String cardSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,8 @@ public class ReceiveActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Upload a file");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fileSearch();
+        TextView text = findViewById(R.id.receiveText);
+        text.setText("Complete :-)");
     }
 
     @Override
@@ -60,14 +65,23 @@ public class ReceiveActivity extends AppCompatActivity {
                     CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
+                    ContentValues values2 = new ContentValues();
                     cardSet = reader.readLine();
-                    values.put("title", cardSet);
-                    values.put("count", 0);
-                    db.insert("cards", null, values);
+                    this.cardSet = cardSet;
+                    try{
+                        values.put("title", cardSet);
+                        values.put("count", 0);
+                        db.insert("cardSets", null, values);
+
                     while ((line = reader.readLine()) != null){
-                        values.put("cardText", line);
-                        values.put("cardSet", cardSet);
-                        db.insert("cards", null, values);
+                        values2.put("cardText", line);
+                        values2.put("cardSet", cardSet);
+                        db.insert("cards", null, values2);
+                    }
+                    }catch (SQLiteConstraintException sqle){
+                        Log.e("Receive", sqle.toString());
+                        Toast.makeText(this, "Set already exists", Toast.LENGTH_SHORT).show();
+                        this.cardSet = null;
                     }
                 }catch (Exception e){
                     Log.e("Receive", e.toString());

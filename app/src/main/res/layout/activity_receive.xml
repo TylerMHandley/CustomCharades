@@ -10,6 +10,11 @@
         android:id="@+id/receiveText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Waiting to receive a card set..." />
+        android:text="Waiting to receive a card set..."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="99dp" />
 </android.support.constraint.ConstraintLayout>
