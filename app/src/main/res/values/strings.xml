@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Charades Reloaded</string>
     <string name="title_activity_main">Charades Reloaded</string>
     <string name="play_game">Play!</string>
     <string name="create_cards">Create Your Own Card Set</string>
@@ -33,8 +33,19 @@
     <string name="cards_in_this_set">Cards in This Set</string>
     <string name="manage_card_sets_empty">You have no card sets yet! Create one using the plus button below.</string>
     <string name="manage_cards_empty">This card set doesn\'t have any cards yet. Add some with the plus button below!</string>
+<<<<<<< HEAD
     <string name="email">Email Address</string>
     <string name="email_message">Enter E-mail address to send the set to.</string>
     <string name="email_title">Enter E-mail address</string>
     <string name="share_button">Share!</string>
+=======
+    <string name="no_playable_sets">You don\'t have any sets with one or more cards in them yet. Would you like to add a new set?</string>
+    <string name="no_playable_sets_title">No Sets to Play With</string>
+    <string name="create_cards_dialog">Create a New Set</string>
+    <string name="play_again">Play Again</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="results">Your Results</string>
+    <string name="no_cards_right">You didn\'t get any cards correct…</string>
+    <string name="no_cards_wrong">You didn\'t miss any cards!</string>
+>>>>>>> 52edc2f77dfea44bea15888b4970a8688b737bb2
 </resources>

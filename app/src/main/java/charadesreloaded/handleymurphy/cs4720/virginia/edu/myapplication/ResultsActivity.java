@@ -20,13 +20,24 @@ public class ResultsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle(R.string.results);
         setContentView(R.layout.activity_results);
         ArrayList<String> correct_cards = (ArrayList<String>) getIntent().getSerializableExtra("correct");
         ArrayList<String> incorrect_cards = (ArrayList<String>) getIntent().getSerializableExtra("incorrect");
         correct = (ListView) findViewById(R.id.correct);
         incorrect = (ListView) findViewById(R.id.incorrect);
-        correct.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, correct_cards));
-        incorrect.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, incorrect_cards));
+        if(correct_cards.size() > 0)
+            correct.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, correct_cards));
+        else {
+            findViewById(R.id.no_cards_right).setVisibility(View.VISIBLE);
+            correct.setVisibility(View.GONE);
+        }
+        if(incorrect_cards.size() > 0)
+            incorrect.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, incorrect_cards));
+        else {
+            findViewById(R.id.no_cards_wrong).setVisibility(View.VISIBLE);
+            incorrect.setVisibility(View.GONE);
+        }
         ListUtils.setDynamicHeight(correct);
         ListUtils.setDynamicHeight(incorrect);
     }
@@ -55,5 +66,15 @@ public class ResultsActivity extends AppCompatActivity {
             mListView.setLayoutParams(params);
             mListView.requestLayout();
         }
+    }
+
+    public void returnToMain(View view) {
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        startActivity(mainIntent);
+    }
+
+    public void returnToPlay(View view) {
+        Intent playIntent = new Intent(this, SelectCardSetToPlayActivity.class);
+        startActivity(playIntent);
     }
 }

@@ -8,15 +8,16 @@
     tools:context="charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication.PlayActivity"
     tools:showIn="@layout/activity_play">
 
+    <!-- Sounds for this activity are from this guy https://freesound.org/people/ertfelda/ -->
 
-        <TextView
-            android:id="@+id/displayedCard"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:gravity="center"
-            android:textSize="100sp"
-            />
+    <TextView
+        android:id="@+id/displayedCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:textSize="100sp"
+        />
 
 </android.support.constraint.ConstraintLayout>

@@ -9,8 +9,11 @@
     tools:showIn="@layout/activity_manage_cards">
 
     <LinearLayout
+        android:id="@+id/manage_cards_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <TextView
