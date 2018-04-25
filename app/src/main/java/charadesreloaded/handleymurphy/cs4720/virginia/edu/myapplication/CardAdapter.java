@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
@@ -140,28 +142,57 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                         case SHARE_CARDSET:
 
                             try{
-                                String fileName = item+"ToShare.charades";
-                                File cardSetFile = new File(mContext.getFilesDir(), fileName);
+                                String fileName = item+"ToShare.txt";
+                                //File cardSetFile = new File(Environment.getExternalStorageDirectory()+File.separator + "tmp" + File.separator+fileName);
+                                final File cardSetFile = new File(mContext.getExternalFilesDir(null), fileName);
+                                cardSetFile.setReadable(true, false);
+                                cardSetFile.setWritable(true, false);
                                 Log.d("connections", cardSetFile.getPath());
+                                cardSetFile.createNewFile();
                                 FileWriter writer = new FileWriter(cardSetFile);
                                 int len = mCards.size();
-                                writer.append(item);
-                                for(int i = 0; i < len; i++){
-                                    writer.append(mCards.get(i));
+                                writer.append(item+"\n");
+                                CardDatabaseHelper dbHelper = new CardDatabaseHelper(mContext);
+                                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                                String [] selectionArgs = {item};
+                                String query = "SELECT cardText FROM cards WHERE cardSet=? ORDER BY cardText";
+                                //Cursor cursor = db.query("cards", projection, null, null, null, null, null);
+                                Cursor cursor = db.rawQuery(query, selectionArgs);
+                                while(cursor.moveToNext()){
+                                    String card = cursor.getString(cursor.getColumnIndexOrThrow("cardText"));
+                                    writer.append(card+"\n");
                                 }
                                 writer.flush();
                                 writer.close();
-                                final String path = cardSetFile.getAbsolutePath();
-                                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                                builder.setMessage(R.string.email_message).setTitle(R.string.email_title);
+                                //final String path = cardSetFile.getAbsolutePath();
                                 final Activity act = (Activity) mContext;
+                                //----------------------------------------------
+                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                emailIntent.setData(Uri.parse("mailto:"));
+                                emailIntent.setType("text/plain");
+
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Look at my cool card Set!");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "My super cool set is attached! You can upload it right to you app!");
+                                emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cardSetFile));
+                                try{
+                                    act.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                                    act.finish();
+                                }catch (android.content.ActivityNotFoundException ex){
+                                    Toast.makeText(act, "There is no email client installed", Toast.LENGTH_SHORT).show();
+                                }
+                                //--------------------------------------
+                                /*
                                 LayoutInflater inflater = act.getLayoutInflater();
                                 final View dialogView = inflater.inflate(R.layout.email_dialog, null);
+                                EditText email_box = dialogView.findViewById(R.id.email_box);
+                                String str = email_box.getText().toString();
+                                Log.e("Share", str);
+                                emailIntent.putExtra(Intent.EXTRA_EMAIL, str);
+                                emailIntent.putExtra(Intent.EXTRA_CC, str);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                                builder.setMessage(R.string.email_message).setTitle(R.string.email_title);
                                 builder.setView(dialogView);
                                 builder.setPositiveButton(R.string.share_button,null);
-
-
-
                                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -169,7 +200,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                                     }
                                 });
                                 final AlertDialog alert = builder.create();
-                                alert.show();
+
+                                //alert.show();
                                 alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener( new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -177,10 +209,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                                         emailIntent.setData(Uri.parse("mailto:"));
                                         emailIntent.setType("text/plain");
                                         EditText email_box = dialogView.findViewById(R.id.email_box);
-                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, email_box.getText().toString());
+                                        String str = email_box.getText().toString();
+                                        Log.e("Share", str);
+                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, str);
+                                        emailIntent.putExtra(Intent.EXTRA_CC, str);
                                         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Look at my cool card Set!");
                                         emailIntent.putExtra(Intent.EXTRA_TEXT, "My super cool set is attached! You can upload it right to you app!");
-                                        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+                                        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(cardSetFile));
                                         try{
                                             act.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
                                             act.finish();
@@ -189,6 +224,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                                         }
                                     }
                                 });
+                                */
 //                                Intent nfcIntent = new Intent(mContext, MakingConnection.class);
 //                                nfcIntent.putExtra("fileName", fileName);
 //                                mContext.startActivity(nfcIntent);
