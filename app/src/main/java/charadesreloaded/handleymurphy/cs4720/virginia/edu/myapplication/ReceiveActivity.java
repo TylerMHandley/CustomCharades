@@ -1,27 +1,25 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class ReceiveActivity extends AppCompatActivity {
     private File mParentPath;
@@ -32,11 +30,28 @@ public class ReceiveActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
-        getSupportActionBar().setTitle("Upload a file");
+        getSupportActionBar().setTitle("Import a Card Set");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        fileSearch();
+
+        //There is a much better way to do this but I am so tired
+        if(savedInstanceState != null) {
+            if (savedInstanceState.getBoolean("finishCalledAlready")) {
+
+            } else {
+                fileSearch();
+            }
+        }
+        else
+            fileSearch();
+
+        findViewById(R.id.findFileButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fileSearch();
+            }
+        });
         TextView text = findViewById(R.id.receiveText);
-        text.setText("Complete :-)");
+        //text.setText("Complete :-)");
     }
 
     @Override
@@ -44,12 +59,20 @@ public class ReceiveActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("finishCalledAlready", true);
+    }
+
     public void fileSearch(){
         Intent openFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         openFile.addCategory(Intent.CATEGORY_OPENABLE);
-        openFile.setType("*/*");
+        openFile.setType("text/plain");
         startActivityForResult(openFile, READ_REQUEST_CODE);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData){
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK){
@@ -71,7 +94,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     try{
                         values.put("title", cardSet);
                         values.put("count", 0);
-                        db.insert("cardSets", null, values);
+                        db.insertOrThrow("cardSets", null, values);
 
                     while ((line = reader.readLine()) != null){
                         values2.put("cardText", line);
@@ -80,36 +103,60 @@ public class ReceiveActivity extends AppCompatActivity {
                     }
                     }catch (SQLiteConstraintException sqle){
                         Log.e("Receive", sqle.toString());
-                        Toast.makeText(this, "Set already exists", Toast.LENGTH_SHORT).show();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle(getApplicationContext().getString(R.string.set_already_exists_title, this.cardSet));
+                        builder.setMessage(getApplicationContext().getString(R.string.set_already_exists, this.cardSet));
+
+                        builder.setCancelable(true);
+                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                        doKeepDialog(alert);
                         this.cardSet = null;
                     }
                 }catch (Exception e){
                     Log.e("Receive", e.toString());
                 }
+                if(this.cardSet != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(getApplicationContext().getString(R.string.set_imported_title, this.cardSet));
+                    builder.setMessage(getApplicationContext().getString(R.string.set_imported, this.cardSet));
+
+                    builder.setCancelable(true);
+                    builder.setPositiveButton(R.string.view_imported_set, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent editIntent = new Intent(getBaseContext(), ManageCardsActivity.class);
+                            editIntent.putExtra("cardSet", cardSet);
+                            startActivity(editIntent);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.do_not_view_imported_set, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    doKeepDialog(alert);
+                }
             }
         }
     }
 
-    /*
-    private void handleViewIntent() {
-        mIntent = getIntent();
-        String action = mIntent.getAction();
-        if (TextUtils.equals(action, Intent.ACTION_VIEW)){
-            Uri beamUri = mIntent.getData();
-            if (TextUtils.equals(beamUri.getScheme(), "file")){
-                //mParentPath = handleFileUri(beamUri);
-            }else if (TextUtils.equals(beamUri.getScheme(), "content")){
-                //mParentPath = handleContentUri(beamUri);
-            }
-        }
+    //Refer to: https://stackoverflow.com/a/27311231
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
-    public String handleFileUri(Uri beamUri){
-        String fileName = beamUri.getPath();
-        File copiedFile = new File(fileName);
-        return copiedFile.getParent();
-    }
-    public String handleContentUri(Uri beamUri){
-        return "temp";
-    }
-    */
 }

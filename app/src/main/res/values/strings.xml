@@ -24,7 +24,7 @@
     <string name="correct_cards">Cards You Got Correct</string>
     <string name="incorrect_cards">Cards You Missed</string>
     <string name="share_title">Share Card Sets</string>
-    <string name="share_description">Would you like to receive or send a card set?</string>
+    <string name="share_description">Would you like to import or send a card set?</string>
     <string name="send">Send a Set</string>
     <string name="receive">Import a Set</string>
     <string name="delete_card_set">Are you sure you want to delete your card set %1$s?</string>
@@ -45,4 +45,13 @@
     <string name="results">Your Results</string>
     <string name="no_cards_right">You didn\'t get any cards correct…</string>
     <string name="no_cards_wrong">You didn\'t miss any cards!</string>
+    <string name="import_set_from_file">Import a Set from a File</string>
+    <string name="import_card_set_description">Click on the button to open your file browser and select a card set file to import. Only .txt files are supported at this time.</string>
+    <string name="ok">OK</string>
+    <string name="set_already_exists">You already have a set called %1$s in your collection.</string>
+    <string name="set_already_exists_title">Can\'t Add Set %1$s</string>
+    <string name="set_imported">Set %1$s was imported properly. Would you like to view it?</string>
+    <string name="set_imported_title">Set %1$s imported.</string>
+    <string name="view_imported_set">View</string>
+    <string name="do_not_view_imported_set">Don\'t View</string>
 </resources>

@@ -8,13 +8,39 @@
 
     <TextView
         android:id="@+id/receiveText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/top_guideline_receive"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:textSize="20sp"
         android:gravity="center"
-        android:text="Waiting to receive a card set..."
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="99dp" />
+        android:text="@string/import_card_set_description" />
+
+    <Button
+        android:id="@+id/findFileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginEnd="150dp"
+        android:text="@string/import_set_from_file"
+        app:layout_constraintTop_toBottomOf="@id/receiveText"
+         />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/top_guideline_receive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.125" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/left_guideline_receive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.125" />
+
 </android.support.constraint.ConstraintLayout>

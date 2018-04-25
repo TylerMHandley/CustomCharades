@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class SelectCardSetToShare extends AppCompatActivity {
     protected ArrayList<String> mCards;
     protected CardAdapter adapter;
+    protected LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,13 @@ public class SelectCardSetToShare extends AppCompatActivity {
         RecyclerView rvCards = findViewById(R.id.rvCards);
         adapter = new CardAdapter(mCards, this, CardAdapter.SHARE_CARDSET);
 
+
         rvCards.setAdapter(adapter);
-        rvCards.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        rvCards.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvCards.getContext(), linearLayoutManager.getOrientation());
+        rvCards.addItemDecoration(dividerItemDecoration);
+
         adapter.notifyDataSetChanged();
     }
 
