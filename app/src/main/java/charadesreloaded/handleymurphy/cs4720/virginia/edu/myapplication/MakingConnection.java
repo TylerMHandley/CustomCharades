@@ -1,5 +1,6 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -18,6 +19,7 @@ public class MakingConnection extends AppCompatActivity {
     private NfcAdapter mNfcAdapter;
     private Uri[] mFileUris;
     private FileUriCallback mFileUriCallback;
+    private String fileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,20 +28,26 @@ public class MakingConnection extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Sending a Card");
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        mFileUriCallback = new FileUriCallback();
-        mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
+        mFileUris = new Uri[1];
         Intent intent = getIntent();
         String fileName = intent.getStringExtra("fileName");
-        File extDir = getExternalFilesDir(null);
-        File requestFile = new File(extDir, fileName);
-        requestFile.setReadable(true, false);
-        Uri fileUri = Uri.fromFile(requestFile);
-        if (fileUri != null){
-            mFileUris[0] = fileUri;
-        }else{
-            Log.e("NFC", "No file URI");
-        }
+        this.fileName = fileName;
+        Log.d("connection", fileName);
+//        File extDir = getExternalFilesDir(null);
+//        File requestFile = new File(extDir, fileName);
+//        Log.d("connection", requestFile.getPath());
+//        requestFile.setReadable(true, false);
+//        Uri fileUri = Uri.fromFile(requestFile);
+//        if (fileUri != null){
+//            mFileUris[0] = fileUri;
+//        }else{
+//            Log.e("NFC", "No file URI");
+//        }
+        Activity a = MakingConnection.this;
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(a);
+        mFileUriCallback = new FileUriCallback();
+        mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, a);
     }
 
     @Override
@@ -54,11 +62,20 @@ public class MakingConnection extends AppCompatActivity {
         startActivity(backIntent);
     }
     private class FileUriCallback implements NfcAdapter.CreateBeamUrisCallback{
-        public FileUriCallback(){
-        }
+
         @Override
         public Uri[] createBeamUris(NfcEvent event) {
-            return mFileUris;
+            File extDir = getExternalFilesDir(null);
+            File requestFile = new File(extDir, fileName);
+            Log.d("connection", requestFile.getPath());
+            requestFile.setReadable(true, false);
+            Uri fileUri = Uri.fromFile(requestFile);
+//            if (fileUri != null){
+//                mFileUris[0] = fileUri;
+//            }else{
+//                Log.e("NFC", "No file URI");
+//            }
+            return new Uri[] {fileUri};
         }
     }
 

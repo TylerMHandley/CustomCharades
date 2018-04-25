@@ -7,10 +7,9 @@
     tools:context=".ReceiveActivity">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/receiveText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Waiting to receive a card set..."
         android:gravity="center"
-        />
+        android:text="Waiting to receive a card set..." />
 </android.support.constraint.ConstraintLayout>

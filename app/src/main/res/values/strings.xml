@@ -10,7 +10,10 @@
     <string name="addCardText">Enter card text</string>
     <string name="save">Save</string>
     <string name="title_activity_select_card_set_to_play">SelectCardSetToPlayActivity</string>
+    <string name="title_activity_select_card_set_to_share">SelectCardSetToShare</string>
     <string name="title_activity_play">PlayActivity</string>
+    <string name="title_activity_receive">ReceiveActivity</string>
+    <string name="title_activity_making_connection">MakingConnection</string>
     <string name="countdown_timer">Time remaining: %1$d seconds</string>
     <string name="get_ready">Get Ready!</string>
     <string name="go">Go!</string>
@@ -23,11 +26,15 @@
     <string name="share_title">Share Card Sets</string>
     <string name="share_description">Would you like to receive or send a card set?</string>
     <string name="send">Send a Set</string>
-    <string name="receive">Receive a Set</string>
+    <string name="receive">Import a Set</string>
     <string name="delete_card_set">Are you sure you want to delete your card set %1$s?</string>
     <string name="delete">Delete</string>
     <string name="card_set_title">Card Set Title</string>
     <string name="cards_in_this_set">Cards in This Set</string>
     <string name="manage_card_sets_empty">You have no card sets yet! Create one using the plus button below.</string>
     <string name="manage_cards_empty">This card set doesn\'t have any cards yet. Add some with the plus button below!</string>
+    <string name="email">Email Address</string>
+    <string name="email_message">Enter E-mail address to send the set to.</string>
+    <string name="email_title">Enter E-mail address</string>
+    <string name="share_button">Share!</string>
 </resources>

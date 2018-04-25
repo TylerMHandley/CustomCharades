@@ -1,13 +1,16 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,7 +25,7 @@ public class SelectCardSetToShare extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Play With Which Card Set?");
+        getSupportActionBar().setTitle("Select a Set to Share");
         mCards = new ArrayList<>();
         initCards();
         RecyclerView rvCards = findViewById(R.id.rvCards);
@@ -48,13 +51,15 @@ public class SelectCardSetToShare extends AppCompatActivity {
     private void initCards() {
         CardDatabaseHelper dbHelper = new CardDatabaseHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String [] projection = {"title"};
+        String[] projection = {"title"};
         String whereClause = "count > 0";
         Cursor cursor = db.query("cardsets", projection, whereClause, null, null, null, "title ASC");
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             String item = cursor.getString(cursor.getColumnIndexOrThrow("title"));
             mCards.add(item);
         }
         cursor.close();
     }
+
+
 }

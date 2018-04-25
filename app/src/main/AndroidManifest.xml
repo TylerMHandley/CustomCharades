@@ -3,7 +3,8 @@
     package="charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication">
 
     <uses-permission android:name="android.permission.NFC" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,6 +33,14 @@
         <activity
             android:name=".SelectCardSetToPlayActivity"
             android:label="@string/title_activity_select_card_set_to_play"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MakingConnection"
+            android:label="@string/title_activity_making_connection"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".SelectCardSetToShare"
+            android:label="@string/title_activity_select_card_set_to_share"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PlayActivity"

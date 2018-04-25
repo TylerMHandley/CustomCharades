@@ -67,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
                 builder.setNegativeButton(R.string.receive, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        Intent beginReceive = new Intent(mContext, ReceiveActivity.class);
+                        startActivity(beginReceive);
                     }
                 });
                 builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent beginNfc = new Intent(mContext, SelectCardSetToShare.class);
+                        startActivity(beginNfc);
                     }
                 });
                 AlertDialog alert = builder.create();

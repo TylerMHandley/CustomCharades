@@ -1,8 +1,12 @@
 package charadesreloaded.handleymurphy.cs4720.virginia.edu.myapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -104,6 +109,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 editView.requestFocus();
     }
 
+
+
+
     @Override
     public void onBindViewHolder(CardAdapter.ViewHolder viewHolder, final int position) {
         final String item = mCards.get(position);
@@ -132,21 +140,61 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                         case SHARE_CARDSET:
 
                             try{
-                                String fileName = item+"toShare.charades";
+                                String fileName = item+"ToShare.charades";
                                 File cardSetFile = new File(mContext.getFilesDir(), fileName);
+                                Log.d("connections", cardSetFile.getPath());
                                 FileWriter writer = new FileWriter(cardSetFile);
                                 int len = mCards.size();
+                                writer.append(item);
                                 for(int i = 0; i < len; i++){
                                     writer.append(mCards.get(i));
                                 }
                                 writer.flush();
                                 writer.close();
-                                Intent nfcIntent = new Intent(mContext, MakingConnection.class);
-                                nfcIntent.putExtra("fileName", fileName);
-                                mContext.startActivity(nfcIntent);
+                                final String path = cardSetFile.getAbsolutePath();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                                builder.setMessage(R.string.email_message).setTitle(R.string.email_title);
+                                final Activity act = (Activity) mContext;
+                                LayoutInflater inflater = act.getLayoutInflater();
+                                final View dialogView = inflater.inflate(R.layout.email_dialog, null);
+                                builder.setView(dialogView);
+                                builder.setPositiveButton(R.string.share_button,null);
+
+
+
+                                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                                final AlertDialog alert = builder.create();
+                                alert.show();
+                                alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener( new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                        emailIntent.setData(Uri.parse("mailto:"));
+                                        emailIntent.setType("text/plain");
+                                        EditText email_box = dialogView.findViewById(R.id.email_box);
+                                        emailIntent.putExtra(Intent.EXTRA_EMAIL, email_box.getText().toString());
+                                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Look at my cool card Set!");
+                                        emailIntent.putExtra(Intent.EXTRA_TEXT, "My super cool set is attached! You can upload it right to you app!");
+                                        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
+                                        try{
+                                            act.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                                            act.finish();
+                                        }catch (android.content.ActivityNotFoundException ex){
+                                            Toast.makeText(act, "There is no email client installed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+//                                Intent nfcIntent = new Intent(mContext, MakingConnection.class);
+//                                nfcIntent.putExtra("fileName", fileName);
+//                                mContext.startActivity(nfcIntent);
 
                             }catch(Exception e){
-
+                                Log.e("Share", e.toString());
                             }
 
                             break;
