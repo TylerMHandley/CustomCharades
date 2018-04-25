@@ -83,7 +83,7 @@ public class ManageCardsActivity extends AppCompatActivity {
             initCards();
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        findViewById(R.id.manage_cards_linear_layout).requestFocus();
         rvCards = findViewById(R.id.rvCards);
         adapter = new CardAdapter(mCards, this, CardAdapter.EDIT_CARD);
 

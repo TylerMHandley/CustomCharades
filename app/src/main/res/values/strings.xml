@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Charades Reloaded</string>
     <string name="title_activity_main">Charades Reloaded</string>
     <string name="play_game">Play!</string>
     <string name="create_cards">Create Your Own Card Set</string>
@@ -36,4 +36,6 @@
     <string name="play_again">Play Again</string>
     <string name="main_menu">Main Menu</string>
     <string name="results">Your Results</string>
+    <string name="no_cards_right">You didn\'t get any cards correct…</string>
+    <string name="no_cards_wrong">You didn\'t miss any cards!</string>
 </resources>
