@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -219,6 +220,7 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                       not like when a subthread tries to mess with the UI--an exception will
                                       be thrown
                                      */
+                                    playSound(R.raw.incorrect);
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -234,12 +236,13 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
                                     lastTime = System.currentTimeMillis();
                                 }
                                 //Got it correct - > these angles should also be changed
-                                //Between -110 and -130 degrees
-                                else if (orientation[2] < -1.92 && orientation[2] > -2.26893) {
+                                //Between -120 and -130 degrees
+                                else if (orientation[2] < -2.0943951 && orientation[2] > -2.44346095) {
                                     correctCards.add(card.getText().toString());
                                     if(correctLimited && correctCards.size() == correctCardsLimit)
                                         break;
                                     mCardsPos++;
+                                    playSound(R.raw.correct);
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -303,6 +306,23 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private void playSound(int soundFile) {
+        MediaPlayer mp;
+        mp = MediaPlayer.create(this, soundFile);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // TODO Auto-generated method stub
+                mp.reset();
+                mp.release();
+                mp=null;
+            }
+
+        });
+        mp.start();
     }
 
     private void gameOver() {
