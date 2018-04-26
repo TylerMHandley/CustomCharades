@@ -71,7 +71,13 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
         //Get player preferences
         loadPrefs = PreferenceManagerFix.getDefaultSharedPreferences(this);
-        playTime = Integer.parseInt(loadPrefs.getString("game_time", "60"));
+        try {
+            playTime = Integer.parseInt(loadPrefs.getString("game_time", "60"));
+        }
+        catch (Exception e) {
+            //Just use the default play time
+            playTime = 60;
+        }
         timerEnabled = loadPrefs.getBoolean("show_timer", true);
         totalLimited = loadPrefs.getBoolean("limit_total_cards", false);
         correctLimited = loadPrefs.getBoolean("limit_correct_cards", false);
@@ -315,7 +321,6 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                // TODO Auto-generated method stub
                 mp.reset();
                 mp.release();
                 mp=null;
@@ -349,8 +354,18 @@ public class PlayActivity extends AppCompatActivity implements SensorEventListen
         Collections.shuffle(mCards);
 
         //Truncate the list to the user preferences
-        totalCardsLimit = Integer.parseInt(loadPrefs.getString("limit_total_cards_number", String.valueOf(mCards.size())));
-        correctCardsLimit = Integer.parseInt(loadPrefs.getString("limit_correct_cards_number", String.valueOf(mCards.size())));
+        try {
+            totalCardsLimit = Integer.parseInt(loadPrefs.getString("limit_total_cards_number", String.valueOf(mCards.size())));
+        }
+        catch(Exception e) {
+            totalCardsLimit = mCards.size();
+        }
+        try {
+            correctCardsLimit = Integer.parseInt(loadPrefs.getString("limit_correct_cards_number", String.valueOf(mCards.size())));
+        }
+        catch (Exception e) {
+            correctCardsLimit = mCards.size();
+        }
 
         if(totalLimited && totalCardsLimit < mCards.size())
             mCards.subList(totalCardsLimit, mCards.size()).clear();

@@ -10,8 +10,6 @@
 
     tools:showIn="@layout/activity_main">
 
-
-
     <Button
         android:id="@+id/play_text"
         android:layout_width="fill_parent"
