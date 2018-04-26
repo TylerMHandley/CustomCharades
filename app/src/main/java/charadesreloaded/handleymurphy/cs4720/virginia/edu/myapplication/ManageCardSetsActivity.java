@@ -69,23 +69,26 @@ public class ManageCardSetsActivity extends AppCompatActivity {
                                           alert.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                                               @Override
                                               public void onClick(View view) {
-                                                  Intent addSetIntent = new Intent(view.getContext(), ManageCardsActivity.class);
                                                   EditText textField = dialogView.findViewById(R.id.cardSetName);
-                                                  String setName = textField.getText().toString();
-                                                  addSetIntent.putExtra("cardSet", setName);
-                                                  CardDatabaseHelper dbHelper = new CardDatabaseHelper(view.getContext());
-                                                  SQLiteDatabase db = dbHelper.getWritableDatabase();
-                                                  ContentValues values = new ContentValues();
-                                                  values.put("title", setName);
-                                                  values.put("count", 0);
-                                                  try {
-                                                      db.insertOrThrow("cardsets", null, values);
-                                                      startActivity(addSetIntent);
-                                                      alert.dismiss();
+                                                  if (!textField.getText().toString().equals("")) {
+                                                      Intent addSetIntent = new Intent(view.getContext(), ManageCardsActivity.class);
+                                                      String setName = textField.getText().toString();
+                                                      addSetIntent.putExtra("cardSet", setName);
+                                                      CardDatabaseHelper dbHelper = new CardDatabaseHelper(view.getContext());
+                                                      SQLiteDatabase db = dbHelper.getWritableDatabase();
+                                                      ContentValues values = new ContentValues();
+                                                      values.put("title", setName);
+                                                      values.put("count", 0);
+                                                      try {
+                                                          db.insertOrThrow("cardsets", null, values);
+                                                          startActivity(addSetIntent);
+                                                          alert.dismiss();
+                                                      } catch (android.database.sqlite.SQLiteConstraintException e) {
+                                                          textField.setError("There's already a card set called " + setName);
+                                                      }
                                                   }
-                                                  catch(android.database.sqlite.SQLiteConstraintException e) {
-                                                      textField.setError("There's already a card set called " + setName);
-                                                  }
+                                                  else
+                                                      textField.setError("Please enter a name");
                                               }
                                           });
                                           doKeepDialog(alert);
